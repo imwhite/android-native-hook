@@ -10,7 +10,7 @@ endef
 
 # Project Config
 include $(CLEAR_VARS)
-LOCAL_MODULE    := dump-dex
+LOCAL_MODULE    := inject
 LOCAL_CFLAGS    += -Wall -fpermissive -DHAVE_PTHREAD -DGOOGLE_PROTOBUF_NO_RTTI
 LOCAL_CPPFLAGS  += -frtti
 
@@ -50,7 +50,9 @@ $(warning LOCAL_C_INCLUDES: $(LOCAL_C_INCLUDES))
 
 LOCAL_C_INCLUDES +=                                             \
     $(SRC_DIR)/                                                 \
-    $(SRC_DIR)/substrate/include                                                 \
+    $(SRC_DIR)/utils                                                 \
+    $(SRC_DIR)/hook/include                                               \
+
 
 
 SRC := $(wildcard                                               \
@@ -59,14 +61,18 @@ SRC := $(wildcard                                               \
     $(SRC_DIR)/*.c                                              \
     $(SRC_DIR)/utils/*.cc                                             \
     $(SRC_DIR)/utils/*.cpp                                            \
+    $(SRC_DIR)/hook/substrate/*.cpp                              \
+    $(SRC_DIR)/hook/*.cpp                              \
+    $(SRC_DIR)/dump_dex/*.cpp                              \
+    $(SRC_DIR)/dump_dex/*.c                              \
 )                                                               \
 
-ifneq ($(TARGET_ARCH_ABI),arm64-v8a)  
-    SRC += $(wildcard                                             \
-        $(SRC_DIR)/substrate/*.cpp                              \
-    )                                                               \
-    $(warning SRC: $(SRC))
-endif 
+# ifneq ($(TARGET_ARCH_ABI),arm64-v8a)  
+#     SRC += $(wildcard                                             \
+#         $(SRC_DIR)/substrate/*.cpp                              \
+#     )                                                               \
+#     $(warning SRC: $(SRC))
+# endif 
 
 LOCAL_SRC_FILES :=  $(SRC:$(LOCAL_PATH)/%=%)               \
 

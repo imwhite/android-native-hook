@@ -1,5 +1,5 @@
 //
-// Created by WrBug on 2018/4/8.
+// Created by white on 2018/4/8.
 //
 
 
@@ -12,42 +12,8 @@
 
 static char _dump_dir[128] = {0};
 
-//生成dex文件
-static void get_file_name(char *name, int len, int dexlen) {
-    init_dump_dir();
-    memset(name, 0, len);
-    sprintf(name, "%s/dump-%u.dex", _dump_dir, dexlen);
-}
-
-//保存dex文件
-void save_dex_file(u_int8_t *data, size_t length) {
-    char filename[1024];
-    get_file_name(filename, sizeof(filename), length);
-    if(access(filename, R_OK) == 0 ){
-        LOGI("%s file exist", filename);
-        return;
-    }
-
-    LOGI("dump dex file name is : %s", filename);
-    LOGI("start dump");
-    int fp = open(filename, O_CREAT | O_WRONLY, 0644);
-    if (fp <= 0) {
-        __android_log_print(ANDROID_LOG_ERROR, TAG, "open or create file error");
-        return;
-    }
-    int ret = (int) write(fp, data, length);
-    if (ret < 0) {
-        __android_log_print(ANDROID_LOG_ERROR, TAG, "write file error");
-    } else {
-        LOGI("dump dex file success `%s`", filename);
-    }
-    close(fp);
-     LOGI("save_dex_file end");
-}
-
-
 // 读取配置文件的包名
-string get_pkg_name(){
+static string get_pkg_name(){
     string pkgname;
 
     // 等待500ms，防止cmdline的值会是 <pre-initialized>
@@ -67,9 +33,10 @@ string get_pkg_name(){
     return pkgname;
 }
 
-void init_dump_dir() {
+
+char *dump_init_dir() {
     if(_dump_dir[0] != 0){
-        return;
+        return _dump_dir;
     }
 
     char dir[128] = {0};
@@ -83,7 +50,7 @@ void init_dump_dir() {
         umask(mode);
     }
     strcpy(_dump_dir, dir);
-
+    return _dump_dir;
 
     // JNIUtils_JNIEnvGuard guard;
     // JNIEnv *env = guard.JNI();
@@ -109,3 +76,28 @@ void init_dump_dir() {
 
     // strcpy(_dump_dir, path.c_str());
 }
+
+void dump_get_file_path(char *path, size_t size, const char *filename) {
+    char *dir = dump_init_dir();
+    memset(path, 0, size);
+    sprintf(path, "%s/%s", dir, filename);
+}
+
+int dump_to_file(const char *filepath, u_int8_t *data, size_t size) {
+    if (!data || size == 0){
+        return -1;
+    }
+
+    int fp = open(filepath, O_CREAT | O_WRONLY, 0644);
+    if (!fp){
+        return -2;
+    }
+    ssize_t ret = write(fp, data, size);
+
+    close(fp);
+
+    return 0;
+}
+
+
+

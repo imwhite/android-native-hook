@@ -1,9 +1,10 @@
-/*
- *
- *  @author : rrrfff@foxmail.com
- *  https://github.com/rrrfff/ndk_dlopen
- *
- */
+//
+// Created by white on 2018/4/8.
+//
+
+#ifndef DLOPEN_H
+#define DLOPEN_H
+
 #pragma once
 
 #include <jni.h>
@@ -23,3 +24,5 @@ int ndk_dladdr(const void *ddr, Dl_info *info);
 #ifdef __cplusplus
 }
 #endif
+
+#endif // DLOPEN_H

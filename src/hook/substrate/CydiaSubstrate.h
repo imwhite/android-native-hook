@@ -45,7 +45,7 @@ struct SubstrateHookMemory {
     SubstrateHookMemory(void *data, size_t size)
     {
         is_created_ = SubstrateMemoryCreate(data, size);
-//        __android_log_print(ANDROID_LOG_ERROR, "dx-native", "is_created_: %d", is_created_);
+//        LOGE("is_created_: %d", is_created_);
     }
 
     ~SubstrateHookMemory() {

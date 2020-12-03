@@ -34,6 +34,7 @@
 #endif
 
 #include "SubstrateDebug.hpp"
+#include "../And64InlineHook.hpp"
 
 #include <errno.h>
 #include <stdio.h>
@@ -750,6 +751,17 @@ static size_t SubstrateHookFunction(void *symbol, void *replace, void **result) 
 }
 #endif
 
+
+
+
+#if defined(__aarch64__)
+    static void SubstrateHookFunction(void *symbol, void *replace, void **result) {
+        A64HookFunction(symbol, replace, result);
+    }
+#endif
+
+
+
 #if defined(__i386__) || defined(__x86_64__)
 
 #include "SubstrateX86.hpp"
@@ -1020,6 +1032,7 @@ DXRetStatus dx_hook_hookfun(void *symbol, void *replace, void **origin) {
         }
     }
 
+    
     MSHookFunction(symbol, replace, origin);
     return DX_DONE;
 }

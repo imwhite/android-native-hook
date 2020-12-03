@@ -39,12 +39,12 @@ bool SubstrateHookMemory::SubstrateMemoryCreate(void *data, size_t size) {
 
     long page(sysconf(_SC_PAGESIZE)); // Portable applications should employ sysconf(_SC_PAGESIZE) instead of getpagesize
 
-//    __android_log_print(ANDROID_LOG_ERROR, "dx-native", "SubstrateMemoryCreate(%p, %ld)", data, size);
+//    LOGE("SubstrateMemoryCreate(%p, %ld)", data, size);
     uintptr_t base = (uintptr_t )data / page * page;
     size_t width = (((uintptr_t )data + size - 1) / page + 1) * page - base;
     void *address = (void* )base;
 
-//    __android_log_print(ANDROID_LOG_ERROR, "dx-native", "SubstrateMemoryCreate-mprotect(%p, %d)", address, width);
+//    LOGE("SubstrateMemoryCreate-mprotect(%p, %d)", address, width);
     if (mprotect(address, width, PROT_READ | PROT_WRITE | PROT_EXEC) == -1) {
         // MSLog(MSLogLevelError, "MS:Error:mprotect() = %d", errno);
         return false;
@@ -56,11 +56,11 @@ bool SubstrateHookMemory::SubstrateMemoryCreate(void *data, size_t size) {
 }
 
 void SubstrateHookMemory::SubstrateMemoryRelease() {
-//    __android_log_print(ANDROID_LOG_ERROR, "dx-native", "SubstrateMemoryRelease-mprotect(%p, %d)", address_, width_);
+//    LOGE("SubstrateMemoryRelease-mprotect(%p, %d)", address_, width_);
     if (mprotect(address_, width_, PROT_READ | PROT_WRITE | PROT_EXEC) == -1) {
         // MSLog(MSLogLevelError, "MS:Error:mprotect() = %d", errno);
 	}
 
-//    __android_log_print(ANDROID_LOG_ERROR, "dx-native", "clear-cache[%p, %p]", address_, (char* )address_ + width_);
+//    LOGE("clear-cache[%p, %p]", address_, (char* )address_ + width_);
     __clear_cache((char* )address_, (char* )address_ + width_);
 }

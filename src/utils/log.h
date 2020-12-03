@@ -5,30 +5,25 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include <stdio.h>
+#include <android/log.h>
+#define DEBUG
+#define LOG_TAG "white-hook"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifdef DEBUG
+#define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__))
+#define LOGV(...) ((void)__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__))
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__))
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__))
+#define LOGF(...) ((void)__android_log_print(ANDROID_LOG_FATA, LOG_TAG, __VA_ARGS__))
 
-
-#define TAG "white-dumpdex"
-
-/**
- * 错误日志输出
- */
-void LOGE(const char *fmt, ...);
-
-
-/**
- * 普通日志输出
- */
-void LOGI(const char *fmt, ...);
-
-    
-
-#ifdef __cplusplus
-}
+#else
+#define LOGD(...)
+#define LOGV(...)
+#define LOGI(...)
+#define LOGW(...)
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__))
+#define LOGF(...) ((void)__android_log_print(ANDROID_LOG_FATA, LOG_TAG, __VA_ARGS__))
 #endif
 
 #endif //LOG_H

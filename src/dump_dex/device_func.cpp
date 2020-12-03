@@ -4,12 +4,48 @@
 
 
 #include "device_func.h"
+#include "dump_dex.h"
 #include "dump_utils.h"
-#include "utils/log.h"
+#include "log.h"
 
 
 const static long DEX_MIN_LEN = 102400L;
 static int sdk_int = 0;
+
+//生成dex文件
+static void get_file_name(char *name, int len, int dexlen) {
+    char *dir = dump_init_dir();
+    memset(name, 0, len);
+    sprintf(name, "%s/dump-%u.dex", dir, dexlen);
+}
+
+//保存dex文件
+void save_dex_file(u_int8_t *data, size_t length) {
+    char filename[1024];
+    get_file_name(filename, sizeof(filename), length);
+    if(access(filename, R_OK) == 0 ){
+        LOGI("%s file exist", filename);
+        return;
+    }
+
+    LOGI("dump dex file name is : %s", filename);
+    LOGI("start dump");
+    int fp = open(filename, O_CREAT | O_WRONLY, 0644);
+    if (fp <= 0) {
+        LOGE("open or create file error");
+        return;
+    }
+    int ret = (int) write(fp, data, length);
+    if (ret < 0) {
+        LOGE("write file error");
+    } else {
+        LOGI("dump dex file success `%s`", filename);
+    }
+    close(fp);
+     LOGI("save_dex_file end");
+}
+
+
 
 void init_sdk_init() {
     if (sdk_int != 0) {
@@ -88,7 +124,7 @@ static void *new_arm64_open_common(uint8_t *base, size_t size, void *location,
                                    bool verify_checksum,
                                    void *error_meessage, void *verify_result) {
     if (size < DEX_MIN_LEN) {
-        __android_log_print(ANDROID_LOG_ERROR, TAG, "size =%u", size);
+        LOGE("size =%u", size);
     } else {
         save_dex_file(base, size);
     }
